@@ -18,7 +18,9 @@ jobs:
       id: gmi
       run: |
         echo "machine_id=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].id')" >> $GITHUB_OUTPUT
-        echo "machine_id=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].state')" >> $GITHUB_OUTPUT
+        echo "machine_state=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].state')" >> $GITHUB_OUTPUT
+        echo $machine_id
+        echo $machine_state
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     outputs:
