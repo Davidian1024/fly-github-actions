@@ -14,6 +14,6 @@ jobs:
 
     steps:
     - uses: superfly/flyctl-actions/setup-flyctl@master
-    - run: flyctl ssh console --app fctc-gitea-mariadb-{{ inputs.environment_hash }} --command 'sh ./test_script.sh'
+    - run: flyctl ssh console --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --command 'mariadb-dump -p --single-transaction --all-databases --result-file=/`date +%F-%H-%M`-dump.sql'    
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
