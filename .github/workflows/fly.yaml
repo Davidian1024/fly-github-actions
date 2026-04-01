@@ -9,13 +9,43 @@ on:
         type: string
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
+  get_machine_info:
+    runs-on: ubuntu-latest
     steps:
     - uses: superfly/flyctl-actions/setup-flyctl@master
-    - run: flyctl ssh console --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --command \
-        "sh -c 'echo env; env; echo pwd; pwd; /test_script.sh'"
-        # "sh -c 'export \$(cat /proc/\$(pgrep mariadbd)/environ | tr \"\\0\" \"\\n\" | xargs) && mariadb-dump --password=$MYSQL_ROOT_PASSWORD --single-transaction --all-databases --result-file=/$(date -u +%F-%H-%M)-dump.sql'"
+    - name: Get Machine Info
+      id: gmi
+      run: |
+        echo "machine_id=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].id')" >> $GITHUB_OUTPUT
+        echo "machine_id=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].state')" >> $GITHUB_OUTPUT
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    outputs:
+      machine_id: ${{ steps.gmi.outputs.machine_id }}
+      machine_state: ${{ steps.gmi.outputs.machine_state }}
+
+  start_machine:
+    needs: get_machine_info
+    runs-on: ubuntu-latest
+    steps:
+    - uses: superfly/flyctl-actions/setup-flyctl@master
+    - name: Get Machine Info
+      id: gmi
+      run: flyctl machine start --app fctc-gitea-mariadb-${{ inputs.environment_hash }} {{ $needs.get_machine_info.outputs.machine_id }}
+      env:
+        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+
+
+
+  # experimentation:
+  #   needs: 
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: superfly/flyctl-actions/setup-flyctl@master
+  #   - run: flyctl ssh console --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --command \
+  #       "sh -c 'echo env; env; echo pwd; pwd; /test_script.sh'"
+  #       # "sh -c 'export \$(cat /proc/\$(pgrep mariadbd)/environ | tr \"\\0\" \"\\n\" | xargs) && mariadb-dump --password=$MYSQL_ROOT_PASSWORD --single-transaction --all-databases --result-file=/$(date -u +%F-%H-%M)-dump.sql'"
+  #     env:
+  #       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
