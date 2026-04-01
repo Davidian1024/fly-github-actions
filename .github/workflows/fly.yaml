@@ -17,9 +17,7 @@ jobs:
     - name: Get Machine Info
       id: gmi
       run: |
-        flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].id'
         echo "machine_id=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].id')" >> $GITHUB_OUTPUT
-        flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].state'
         echo "machine_state=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].state')" >> $GITHUB_OUTPUT
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -32,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: superfly/flyctl-actions/setup-flyctl@master
-    - name: Get Machine Info
+    - name: Start Machine
       run: |
         echo "[machine_id]:[" ${{ needs.get_machine_info.outputs.machine_id }} "]"
         echo "[machine_state]:[" ${{ needs.get_machine_info.outputs.machine_state }} "]"
