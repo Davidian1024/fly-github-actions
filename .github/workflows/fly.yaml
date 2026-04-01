@@ -15,6 +15,7 @@ jobs:
     steps:
     - uses: superfly/flyctl-actions/setup-flyctl@master
     - run: flyctl ssh console --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --command \
-        "sh -c 'export \$(cat /proc/\$(pgrep mariadbd)/environ | tr \"\\0\" \"\\n\" | xargs) && mariadb-dump --password=$MYSQL_ROOT_PASSWORD --single-transaction --all-databases --result-file=/$(date -u +%F-%H-%M)-dump.sql'"
+        "sh -c 'echo env; env; echo pwd; pwd;'"
+        # "sh -c 'export \$(cat /proc/\$(pgrep mariadbd)/environ | tr \"\\0\" \"\\n\" | xargs) && mariadb-dump --password=$MYSQL_ROOT_PASSWORD --single-transaction --all-databases --result-file=/$(date -u +%F-%H-%M)-dump.sql'"
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
