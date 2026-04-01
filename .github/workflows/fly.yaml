@@ -35,7 +35,7 @@ jobs:
       run: |
         echo "[machine_id]:[" ${{ needs.get_machine_info.outputs.machine_id }} "]"
         echo "[machine_state]:[" ${{ needs.get_machine_info.outputs.machine_state }} "]"
-      run: flyctl machine start --app fctc-gitea-mariadb-${{ inputs.environment_hash }} ${{ needs.get_machine_info.outputs.machine_id }}
+        flyctl machine start --app fctc-gitea-mariadb-${{ inputs.environment_hash }} ${{ needs.get_machine_info.outputs.machine_id }}
       env:
         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
