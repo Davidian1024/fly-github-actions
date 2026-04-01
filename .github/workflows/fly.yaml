@@ -15,6 +15,7 @@ jobs:
     steps:
     - uses: superfly/flyctl-actions/setup-flyctl@master
     - name: Get Machine Info
+      id: gmi
       run: |
         flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].id'
         echo "machine_id=$(flyctl machine list --app fctc-gitea-mariadb-${{ inputs.environment_hash }} --json | jq -r '.[].id')" >> $GITHUB_OUTPUT
